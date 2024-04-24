@@ -1,40 +1,48 @@
 package com.turing.rubrica.controller;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.turing.rubrica.database.Database;
 import com.turing.rubrica.model.Persona;
 import com.turing.rubrica.view.EditorView;
 import com.turing.rubrica.view.MainView;
 
 public class MainController 
 {
-	private Vector<Persona> rubrica;
 	private MainView view;
 	
-	public MainController(Vector<Persona> rubrica, MainView view)
+	public MainController(MainView view)
 	{
-		this.rubrica = rubrica;
 		this.view = view;
 		view.getBtnNuovo().addActionListener(e -> openEditor());
-		view.getBtnModifica().addActionListener(e -> editPersona());
-		view.getBtnElimina().addActionListener(e -> deletePersona());
-	}
-
-	public Vector<Persona> getRubrica() 
-	{
-		return rubrica;
+		view.getBtnModifica().addActionListener(e -> {
+			try {
+				editPersona();
+			} catch (IOException | SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
+		view.getBtnElimina().addActionListener(e -> {
+			try {
+				deletePersona();
+			} catch (IOException | SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
 	}
 	
 	private void openEditor() 
 	{
 		EditorView editorView = new EditorView();
-		EditorController editorController = new EditorController(rubrica, editorView, null, this);
+		EditorController editorController = new EditorController(editorView, null, this);
         editorView.setVisible(true);
     }
 
-    private void editPersona() 
+    private void editPersona() throws IOException, SQLException 
     {
     	int selectedRow = view.getTable().getSelectedRow();
         if(selectedRow == -1) 
@@ -47,7 +55,7 @@ public class MainController
         Persona p = findPersonByTelephone(telefono);
         
         EditorView editorView = new EditorView();
-		EditorController editorController = new EditorController(rubrica, editorView, p, this);
+		EditorController editorController = new EditorController(editorView, p, this);
 		editorView.getTxtNome().setText(p.getNome());
 		editorView.getTxtCognome().setText(p.getCognome());
 		editorView.getTxtIndirizzo().setText(p.getIndirizzo());
@@ -56,7 +64,7 @@ public class MainController
 		editorView.setVisible(true);
     }
 
-    private void deletePersona() 
+    private void deletePersona() throws IOException, SQLException 
     {
     	int selectedRow = view.getTable().getSelectedRow();
         if(selectedRow == -1) 
@@ -70,14 +78,14 @@ public class MainController
         int choice = JOptionPane.showConfirmDialog(view, "Eliminare la persona "+p.getNome()+" "+p.getCognome()+"?", "Conferma Eliminazione", JOptionPane.YES_NO_OPTION);
         if(choice == JOptionPane.YES_OPTION)
         {
-        	rubrica.remove(p);
+        	// TODO: add delete feature
         	updateTable();
         }
     }
     
-    public Persona findPersonByTelephone(String telefono)
+    public Persona findPersonByTelephone(String telefono) throws IOException, SQLException
     {
-    	for(Persona p : rubrica)
+    	for(Persona p : Database.getAll())
     	{
     		if(p.getTelefono().equals(telefono))
     			return p;
@@ -85,10 +93,10 @@ public class MainController
 		return null;
     }
     
-    public void updateTable() 
+    public void updateTable() throws IOException, SQLException 
     {
     	view.getTableModel().setRowCount(0);
-        for (Persona persona : rubrica) { //personaDao.getAll()
+        for (Persona persona : Database.getAll()) { //personaDao.getAll()
             Object[] row = {persona.getNome(), persona.getCognome(), persona.getTelefono()};
             view.getTableModel().addRow(row);
         }

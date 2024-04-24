@@ -1,31 +1,38 @@
 package com.turing.rubrica.controller;
 
+import java.awt.HeadlessException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
 import com.turing.rubrica.model.Persona;
 import com.turing.rubrica.view.EditorView;
+import com.turing.rubrica.database.Database;
 
 public class EditorController 
 {
-	private Vector<Persona> rubrica;
 	private Persona pToEdit;
     private EditorView view;
     private MainController mc;
 
-    public EditorController(Vector<Persona> rubrica, EditorView view, Persona pToEdit, MainController mc) {
-        this.rubrica = rubrica;
+    public EditorController(EditorView view, Persona pToEdit, MainController mc) {
         this.view = view;
         this.pToEdit = pToEdit;
         this.mc = mc;
 
-        // Aggiungiamo i listener ai pulsanti della EditorView
-        view.getBtnSalva().addActionListener(e -> savePersona());
+        view.getBtnSalva().addActionListener(e -> {
+			try {
+				savePersona();
+			} catch (IOException | SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
         view.getBtnAnnulla().addActionListener(e -> view.dispose());
     }
 
-    private void savePersona() 
+    private void savePersona() throws IOException, SQLException 
     {
     	String nome = view.getTxtNome().getText();
         String cognome = view.getTxtCognome().getText();
@@ -36,7 +43,7 @@ public class EditorController
         if(pToEdit == null)
         {
             Persona pToAdd = new Persona(nome, cognome, indirizzo, telefono, eta);
-            for(Persona p : rubrica)
+            for(Persona p : Database.getAll())
             {
             	if(p.equals(pToAdd))
             	{
@@ -44,14 +51,15 @@ public class EditorController
             		return;
             	}
             }
-            rubrica.add(pToAdd);
+            Database.save(pToAdd);
             
         }
         else
         {
-        	int indexToEdit = rubrica.indexOf(pToEdit);
-        	Persona p = new Persona(nome, cognome, indirizzo, telefono, eta);
-        	rubrica.set(indexToEdit, p);
+        	// TODO: add databse update()
+//        	int indexToEdit = rubrica.indexOf(pToEdit);
+//        	Persona p = new Persona(nome, cognome, indirizzo, telefono, eta);
+//        	rubrica.set(indexToEdit, p);
         }
         mc.updateTable();
         view.dispose();

@@ -3,9 +3,12 @@ package com.turing.rubrica.view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.turing.rubrica.database.Database;
 import com.turing.rubrica.model.Persona;
 
 import java.awt.*;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class MainView extends JFrame 
@@ -16,13 +19,10 @@ public class MainView extends JFrame
 	private JTable table;
 	private JButton btnNuovo;
 	private JButton btnModifica;
-	private JButton btnElimina;
-	private Vector<Persona> rubrica;
-	
+	private JButton btnElimina;	
 
-    public MainView(Vector<Persona> rubrica) 
+    public MainView() throws IOException, SQLException 
     {
-    	this.rubrica = rubrica;
         // creazione della finestra principale
     	setTitle("Rubrica");
         setSize(600, 400);
@@ -35,7 +35,7 @@ public class MainView extends JFrame
         tableModel = new DefaultTableModel(new Object[]{"Nome", "Cognome", "Telefono"}, 0);
         table = new JTable(tableModel);
         // aggiunta nuove righe al DefaultTableModel con i dati del Vector rubrica
-        for(Persona p : this.rubrica) 
+        for(Persona p : Database.getAll()) 
         {
             Object[] row = {p.getNome(), p.getCognome(), p.getTelefono()};
             tableModel.addRow(row);
