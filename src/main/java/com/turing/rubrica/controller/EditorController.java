@@ -39,15 +39,15 @@ public class EditorController
         String indirizzo = view.getTxtIndirizzo().getText();
         String telefono = view.getTxtTelefono().getText();
         int eta = Integer.parseInt(view.getTxtEta().getText());
+        Persona pToAdd = new Persona(nome, cognome, indirizzo, telefono, eta);
         
         if(pToEdit == null)
         {
-            Persona pToAdd = new Persona(nome, cognome, indirizzo, telefono, eta);
             for(Persona p : Database.getAll())
             {
-            	if(p.equals(pToAdd))
+            	if(p.getTelefono().equals(pToAdd.getTelefono()))
             	{
-            		JOptionPane.showMessageDialog(view, "La persona identificata è già in rubrica", "Errore", JOptionPane.ERROR_MESSAGE);
+            		JOptionPane.showMessageDialog(view, "Una persona con lo stesso telefono è già presente in rubrica", "Errore", JOptionPane.ERROR_MESSAGE);
             		return;
             	}
             }
@@ -56,10 +56,7 @@ public class EditorController
         }
         else
         {
-        	// TODO: add databse update()
-//        	int indexToEdit = rubrica.indexOf(pToEdit);
-//        	Persona p = new Persona(nome, cognome, indirizzo, telefono, eta);
-//        	rubrica.set(indexToEdit, p);
+        	Database.update(pToEdit, pToAdd);
         }
         mc.updateTable();
         view.dispose();

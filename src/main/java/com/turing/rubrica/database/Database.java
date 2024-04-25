@@ -1,5 +1,6 @@
 package com.turing.rubrica.database;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,8 +19,9 @@ public class Database
 	public static Connection getConnection() throws IOException, SQLException
 	{
 		Properties prp = new Properties();
-        FileInputStream credentials = new FileInputStream("C:/Users/carlo/eclipse-workspace-java/rubricabackup/src/main/java/com/turing/rubricabackup/credenziali_database.properties");
-        prp.load(credentials);
+//		FileInputStream credentials = new FileInputStream(new File("src/main/java/com/turing/rubrica/credenziali_database.properties").getAbsolutePath());
+		FileInputStream credentials = new FileInputStream(new File("credenziali_database.properties").getAbsolutePath());
+		prp.load(credentials);
         String username = prp.getProperty("username");
         String password = prp.getProperty("password");
         String ip = prp.getProperty("ip-server-mysql");
@@ -43,6 +45,33 @@ public class Database
         
         pstmt.executeUpdate();
     }
+	
+	public static void update(Persona pOld, Persona pNew) throws IOException, SQLException 
+	{
+	    String query = "UPDATE rubrica SET nome=?, cognome=?, indirizzo=?, telefono=?, eta=? WHERE telefono=?";
+	    Connection conn = getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(query);
+  
+        pstmt.setString(1, pNew.getNome());
+        pstmt.setString(2, pNew.getCognome());
+        pstmt.setString(3, pNew.getIndirizzo());
+        pstmt.setString(4, pNew.getTelefono());
+        pstmt.setInt(5, pNew.getEta());
+        pstmt.setString(6, pOld.getTelefono());
+
+        pstmt.executeUpdate();
+	}
+	
+	public static void delete(Persona pToDelete) throws IOException, SQLException 
+	{
+	    String query = "DELETE FROM rubrica WHERE telefono=?";
+	    Connection conn = getConnection();
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    
+	    pstmt.setString(1, pToDelete.getTelefono());
+	    
+	    pstmt.executeUpdate();
+	}
 	
 	public static Vector<Persona> getAll() throws IOException, SQLException 
 	{

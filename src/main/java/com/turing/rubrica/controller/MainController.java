@@ -78,7 +78,7 @@ public class MainController
         int choice = JOptionPane.showConfirmDialog(view, "Eliminare la persona "+p.getNome()+" "+p.getCognome()+"?", "Conferma Eliminazione", JOptionPane.YES_NO_OPTION);
         if(choice == JOptionPane.YES_OPTION)
         {
-        	// TODO: add delete feature
+        	Database.delete(p);
         	updateTable();
         }
     }
@@ -96,7 +96,8 @@ public class MainController
     public void updateTable() throws IOException, SQLException 
     {
     	view.getTableModel().setRowCount(0);
-        for (Persona persona : Database.getAll()) { //personaDao.getAll()
+        for (Persona persona : Database.getAll()) 
+        {
             Object[] row = {persona.getNome(), persona.getCognome(), persona.getTelefono()};
             view.getTableModel().addRow(row);
         }

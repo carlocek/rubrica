@@ -61,26 +61,4 @@ public class Persona
 	{
 		this.eta = eta;
 	}
-	
-	@Override
-    public boolean equals(Object o) 
-	{
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Persona persona = (Persona)o;
-        return Objects.equals(nome, persona.nome) &&
-               Objects.equals(cognome, persona.cognome) &&
-               Objects.equals(indirizzo, persona.indirizzo) &&
-               Objects.equals(telefono, persona.telefono) &&
-               eta == persona.eta;
-    }
-
-    @Override
-    public int hashCode() 
-    {
-        return Objects.hash(nome, cognome, indirizzo, telefono, eta);
-    }
-
 }
