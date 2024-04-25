@@ -19,8 +19,8 @@ public class Database
 	public static Connection getConnection() throws IOException, SQLException
 	{
 		Properties prp = new Properties();
-//		FileInputStream credentials = new FileInputStream(new File("src/main/java/com/turing/rubrica/credenziali_database.properties").getAbsolutePath());
-		FileInputStream credentials = new FileInputStream(new File("credenziali_database.properties").getAbsolutePath());
+		FileInputStream credentials = new FileInputStream(new File("src/main/java/com/turing/rubrica/credenziali_database.properties").getAbsolutePath());
+//		FileInputStream credentials = new FileInputStream(new File("credenziali_database.properties").getAbsolutePath());
 		prp.load(credentials);
         String username = prp.getProperty("username");
         String password = prp.getProperty("password");
@@ -44,6 +44,8 @@ public class Database
         pstmt.setInt(5, pToAdd.getEta());
         
         pstmt.executeUpdate();
+        pstmt.close();
+        conn.close();
     }
 	
 	public static void update(Persona pOld, Persona pNew) throws IOException, SQLException 
@@ -60,6 +62,8 @@ public class Database
         pstmt.setString(6, pOld.getTelefono());
 
         pstmt.executeUpdate();
+        pstmt.close();
+        conn.close();
 	}
 	
 	public static void delete(Persona pToDelete) throws IOException, SQLException 
@@ -71,6 +75,8 @@ public class Database
 	    pstmt.setString(1, pToDelete.getTelefono());
 	    
 	    pstmt.executeUpdate();
+	    pstmt.close();
+        conn.close();
 	}
 	
 	public static Vector<Persona> getAll() throws IOException, SQLException 
@@ -90,6 +96,8 @@ public class Database
             int eta = rs.getInt("eta");
             rubrica.add(new Persona(nome, cognome, indirizzo, telefono, eta));
         }
+	    stmt.close();
+        conn.close();
 	    
 	    return rubrica;
 	}

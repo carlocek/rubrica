@@ -52,7 +52,6 @@ public class EditorController
             	}
             }
             Database.save(pToAdd);
-            
         }
         else
         {
