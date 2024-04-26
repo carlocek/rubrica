@@ -2,7 +2,6 @@ package com.turing.rubrica.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 

@@ -1,7 +1,5 @@
 package com.turing.rubrica.model;
 
-import java.util.Objects;
-
 import com.turing.rubrica.model.Persona;
 
 public class Persona 

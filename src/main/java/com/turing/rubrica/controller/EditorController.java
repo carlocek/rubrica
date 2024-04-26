@@ -1,9 +1,7 @@
 package com.turing.rubrica.controller;
 
-import java.awt.HeadlessException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -38,7 +36,18 @@ public class EditorController
         String cognome = view.getTxtCognome().getText();
         String indirizzo = view.getTxtIndirizzo().getText();
         String telefono = view.getTxtTelefono().getText();
-        int eta = Integer.parseInt(view.getTxtEta().getText());
+        if(!telefono.chars().allMatch(Character::isDigit))
+    	{
+    		JOptionPane.showMessageDialog(view, "Il campo Telefono deve contenere solo cifre", "Errore", JOptionPane.ERROR_MESSAGE);
+    		return;
+    	}
+        int eta;
+        try {
+        	eta = Integer.parseInt(view.getTxtEta().getText());
+        } catch(NumberFormatException e) {
+        	JOptionPane.showMessageDialog(view, "Il campo Eta deve contenere un numero", "Errore", JOptionPane.ERROR_MESSAGE);
+    		return;
+        }
         Persona pToAdd = new Persona(nome, cognome, indirizzo, telefono, eta);
         
         if(pToEdit == null)

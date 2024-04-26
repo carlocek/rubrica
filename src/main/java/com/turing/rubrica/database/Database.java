@@ -13,14 +13,15 @@ import java.util.Properties;
 import java.util.Vector;
 
 import com.turing.rubrica.model.Persona;
+import com.turing.rubrica.model.Utente;
 
 public class Database 
 {
 	public static Connection getConnection() throws IOException, SQLException
 	{
 		Properties prp = new Properties();
-		FileInputStream credentials = new FileInputStream(new File("src/main/java/com/turing/rubrica/credenziali_database.properties").getAbsolutePath());
-//		FileInputStream credentials = new FileInputStream(new File("credenziali_database.properties").getAbsolutePath());
+//		FileInputStream credentials = new FileInputStream(new File("src/main/java/com/turing/rubrica/credenziali_database.properties").getAbsolutePath());
+		FileInputStream credentials = new FileInputStream(new File("credenziali_database.properties").getAbsolutePath());
 		prp.load(credentials);
         String username = prp.getProperty("username");
         String password = prp.getProperty("password");
@@ -46,6 +47,18 @@ public class Database
         pstmt.executeUpdate();
         pstmt.close();
         conn.close();
+    }
+	
+	public static void save(Utente uToAdd) throws IOException, SQLException 
+	{
+        String query = "INSERT INTO utenti (username, password) VALUES (?, ?)";
+        Connection conn = getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        
+        pstmt.setString(1, uToAdd.getUsername());
+        pstmt.setString(2, uToAdd.getPassword());
+        
+        pstmt.executeUpdate();
     }
 	
 	public static void update(Persona pOld, Persona pNew) throws IOException, SQLException 
@@ -100,5 +113,21 @@ public class Database
         conn.close();
 	    
 	    return rubrica;
+	}
+	
+	public static boolean authenticate(String username, String password) throws IOException, SQLException 
+	{
+	    String query = "SELECT username, password FROM utenti";
+	    Connection conn = getConnection();
+	    Statement stmt = conn.createStatement();
+	    ResultSet rs = stmt.executeQuery(query);
+	    while (rs.next()) 
+        {
+            String u = rs.getString("username");
+            String p = rs.getString("password");
+            if(username.equals(u) && password.equals(p))
+            	return true;
+        }
+	    return false;
 	}
 }
